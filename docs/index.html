@@ -1,0 +1,760 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Angel Interactive Listening Activity</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --dark: #34495e;
+            --light: #ecf0f1;
+            --accent: #e74c3c;
+            --correct: #2ecc71;
+            --incorrect: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+        }
+        
+        .audio-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .audio-player {
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #27ae60;
+        }
+        
+        .instructions {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .quiz-section {
+            display: none;
+        }
+        
+        .question-container {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        
+        .question {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-radius: 5px;
+            background-color: white;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .option:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .option.selected {
+            border-color: var(--primary);
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        
+        .option.correct {
+            background-color: rgba(46, 204, 113, 0.2);
+            border-color: var(--correct);
+        }
+        
+        .option.incorrect {
+            background-color: rgba(231, 76, 60, 0.2);
+            border-color: var(--incorrect);
+        }
+        
+        .option input[type="radio"] {
+            margin-right: 10px;
+        }
+        
+        .results {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            display: none;
+        }
+        
+        .results h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .score {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .transcript-section {
+            display: none;
+        }
+        
+        .transcript {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            line-height: 1.7;
+        }
+        
+        .transcript p {
+            margin-bottom: 15px;
+        }
+        
+        .transcript strong {
+            color: var(--primary);
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+        }
+        
+        .progress-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+            position: relative;
+        }
+        
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .progress-step {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .progress-step.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .progress-step.completed {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .progress-bar::before {
+            content: "";
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            height: 3px;
+            background-color: #ddd;
+            z-index: 0;
+        }
+        
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .progress-label {
+            text-align: center;
+            width: 33.33%;
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px 0;
+            color: #888;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Business Angel Interactive Listening Activity</h1>
+            <p>Learn about business angels while improving your listening skills</p>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-labels">
+                <div class="progress-label">Listen</div>
+                <div class="progress-label">Answer Questions</div>
+                <div class="progress-label">Review Results</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-step active" id="step1">1</div>
+                <div class="progress-step" id="step2">2</div>
+                <div class="progress-step" id="step3">3</div>
+            </div>
+        </div>
+        
+        <section class="card" id="intro-section">
+            <h2>Welcome to the Business Angel Listening Activity</h2>
+            <div class="instructions">
+                <p>In this activity, you will:</p>
+                <ol>
+                    <li>Listen to an interview with a business angel named Mark Fletcher</li>
+                    <li>Answer 7 multiple-choice questions about the interview</li>
+                    <li>Check your answers and review the transcript</li>
+                </ol>
+                <p>Ready to begin? Click the button below!</p>
+            </div>
+            <div class="text-center">
+                <button class="btn btn-secondary" id="start-btn">Start Activity</button>
+            </div>
+        </section>
+        
+        <section class="card hidden" id="listening-section">
+            <h2>Listening Section</h2>
+            <div class="instructions">
+                <p>Listen to a "Business Angel" being interviewed on a radio programme.</p>
+                <p>You can listen to the audio multiple times if needed.</p>
+            </div>
+            <div class="audio-container">
+                <!-- Placeholder for audio player - in a real implementation, you would include an actual audio file -->
+                <audio controls class="audio-player" id="business-angel-audio">
+                    <source src="Business_Angel.mp3" type="audio/mpeg">
+                    
+                </audio>
+            </div>
+            <div class="text-center">
+                <button class="btn" id="continue-to-quiz">Continue to Questions</button>
+            </div>
+        </section>
+        
+        <section class="card hidden" id="quiz-section">
+            <h2>Multiple Choice Questions</h2>
+            <div class="instructions">
+                <p>Choose the best answer (a, b, or c) for each question based on the interview.</p>
+                <p>You can navigate between questions using the buttons below each question.</p>
+            </div>
+            
+            <div id="questions-container"></div>
+            
+            <div class="navigation-buttons">
+                <button class="btn hidden" id="prev-question">Previous Question</button>
+                <button class="btn" id="next-question">Next Question</button>
+                <button class="btn hidden" id="submit-quiz">Submit Answers</button>
+            </div>
+        </section>
+        
+        <section class="card hidden" id="results-section">
+            <h2>Your Results</h2>
+            <div class="results" id="results-display">
+                <h3>You've completed the listening activity!</h3>
+                <div class="score" id="score-display"></div>
+                <div id="feedback"></div>
+            </div>
+            
+            <div class="text-center">
+                <button class="btn" id="show-answers">Review Answers</button>
+                <button class="btn btn-secondary" id="show-transcript">View Transcript</button>
+                <button class="btn" id="restart-activity">Restart Activity</button>
+            </div>
+        </section>
+        
+        <section class="card hidden" id="answers-section">
+            <h2>Answer Review</h2>
+            <div id="answers-container"></div>
+            <div class="text-center">
+                <button class="btn" id="back-to-results">Back to Results</button>
+            </div>
+        </section>
+        
+        <section class="card hidden" id="transcript-section">
+            <h2>Audio Transcript</h2>
+            <div class="transcript">
+                <p><strong>Presenter:</strong> Welcome to this week's programme. I have with me in the studio Mark Fletcher, a business angel. Mark, can you explain what a business angel is.</p>
+                <p><strong>Mark:</strong> Yes, well it sounds like someone who is altruistic, but in fact a business angel expects to make a good return on their money. We usually invest in start-ups and small business looking to expand. When the company does well we expect our capital back with a substantial return. Sometimes we group together to make a syndicated deal.</p>
+                <p><strong>Presenter:</strong> How do these investments differ from bank loans?</p>
+                <p><strong>Mark:</strong> In my case I like to lend between ten and a hundred thousand pounds to a business. I don't charge interest, so I'm taking a risk with my money. But within five years I expect to get a good return on this investment – about fifty or 60 percent.</p>
+                <p><strong>Presenter:</strong> How do you get your money back?</p>
+                <p><strong>Mark:</strong> The company either raises money by floating on the stock market, or is sold. I will have an agreement with the owners as to how much of the money raised goes to me.</p>
+                <p><strong>Presenter:</strong> How do you find a company to invest in?</p>
+                <p><strong>Mark:</strong> I belong to a network of business angels, and business owners contact us to find an investor. Typically, they give a presentation to a group of prospective investors, and if anyone likes what they see, they put money into the business.</p>
+                <p><strong>Presenter:</strong> How do you decide who to invest in?</p>
+                <p><strong>Mark:</strong> I go very much by gut feeling. Of course I need to see business plans, but if I think the company is producing something that there's a market for, and if I think the owners have the drive and ambition to do well, then I'll put my money in.</p>
+                <p><strong>Presenter:</strong> Are all the businesses you invest in successful?</p>
+                <p><strong>Mark:</strong> (laughs) No, of course not. If I invest in ten companies, I expect three or four to go bust, two or three to do OK and a couple to be really good. Those are the ones I make my money on. Earlier this year I got back ten times the amount I'd invested in one company. This makes up for the investments where I make a complete loss.</p>
+                <p><strong>Presenter:</strong> And once you've invested your money, is that it or do you have any further involvement in the company?</p>
+                <p><strong>Mark:</strong> I'm very much a hands-on investor. Before I became a business angel I ran several successful businesses which I then sold on, so I've got plenty of experience and I like to help companies develop and expand. Sometimes I'll expect to become a director of the company. Other times I concentrate on giving financial advice. The great advantage is that I can see what is happening to my money.</p>
+                <p><strong>Presenter:</strong> Thanks very much, Mark. Now if anyone is interested in contacting a business angel, you can find out more on our website.</p>
+            </div>
+            <div class="text-center">
+                <button class="btn" id="back-to-results-from-transcript">Back to Results</button>
+            </div>
+        </section>
+        
+        <footer>
+            <p>Created by Alioune Abdou Salam Kane & Awa Diaw</p>
+            <p>Based on materials from British Council LearnEnglish Professionals</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Questions data
+            const questions = [
+                {
+                    id: 1,
+                    text: "What is a business angel?",
+                    options: [
+                        { id: 'a', text: "Someone who works for a charity." },
+                        { id: 'b', text: "Someone who sets up a new business." },
+                        { id: 'c', text: "Someone who invests in new and small businesses." }
+                    ],
+                    correctAnswer: 'c'
+                },
+                {
+                    id: 2,
+                    text: "How does an investment from a business angel differ from a bank loan?",
+                    options: [
+                        { id: 'a', text: "A business angel doesn't charge interest." },
+                        { id: 'b', text: "A business angel will never take a risk." },
+                        { id: 'c', text: "A business angel only lends small amounts of money." }
+                    ],
+                    correctAnswer: 'a'
+                },
+                {
+                    id: 3,
+                    text: "What kind of return does Mark usually expect to get on an investment?",
+                    options: [
+                        { id: 'a', text: "Five per cent." },
+                        { id: 'b', text: "About fifty or sixty per cent." },
+                        { id: 'c', text: "About ten times the amount invested." }
+                    ],
+                    correctAnswer: 'b'
+                },
+                {
+                    id: 4,
+                    text: "How do business angels find businesses to invest in?",
+                    options: [
+                        { id: 'a', text: "By contacting business owners." },
+                        { id: 'b', text: "By looking on the internet." },
+                        { id: 'c', text: "By attending presentations by business owners." }
+                    ],
+                    correctAnswer: 'c'
+                },
+                {
+                    id: 5,
+                    text: "What factors help Mark decide who to invest in?",
+                    options: [
+                        { id: 'a', text: "Bank statements and other financial records." },
+                        { id: 'b', text: "The type of product and the personal characteristics of the owners." },
+                        { id: 'c', text: "The availability of a similar product on the market." }
+                    ],
+                    correctAnswer: 'b'
+                },
+                {
+                    id: 6,
+                    text: "For every ten investments, how many usually make a lot of money for Mark?",
+                    options: [
+                        { id: 'a', text: "Two." },
+                        { id: 'b', text: "Three or four." },
+                        { id: 'c', text: "Ten." }
+                    ],
+                    correctAnswer: 'a'
+                },
+                {
+                    id: 7,
+                    text: "Does Mark like to have any involvement in companies he's invested in?",
+                    options: [
+                        { id: 'a', text: "Yes, he likes to have direct involvement." },
+                        { id: 'b', text: "Yes, but only by giving advice." },
+                        { id: 'c', text: "No, he prefers to wait and see what happened to his money." }
+                    ],
+                    correctAnswer: 'a'
+                }
+            ];
+            
+            // State variables
+            let currentQuestionIndex = 0;
+            let userAnswers = Array(questions.length).fill(null);
+            
+            // References to DOM elements
+            const introSection = document.getElementById('intro-section');
+            const listeningSection = document.getElementById('listening-section');
+            const quizSection = document.getElementById('quiz-section');
+            const resultsSection = document.getElementById('results-section');
+            const answersSection = document.getElementById('answers-section');
+            const transcriptSection = document.getElementById('transcript-section');
+            
+            const questionsContainer = document.getElementById('questions-container');
+            const prevButton = document.getElementById('prev-question');
+            const nextButton = document.getElementById('next-question');
+            const submitButton = document.getElementById('submit-quiz');
+            
+            const step1 = document.getElementById('step1');
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
+            
+            // Event listeners for navigation
+            document.getElementById('start-btn').addEventListener('click', function() {
+                introSection.classList.add('hidden');
+                listeningSection.classList.remove('hidden');
+                listeningSection.classList.add('fade-in');
+            });
+            
+            document.getElementById('continue-to-quiz').addEventListener('click', function() {
+                listeningSection.classList.add('hidden');
+                quizSection.classList.remove('hidden');
+                quizSection.classList.add('fade-in');
+                step1.classList.remove('active');
+                step1.classList.add('completed');
+                step2.classList.add('active');
+                renderQuestion();
+            });
+            
+            document.getElementById('show-answers').addEventListener('click', function() {
+                resultsSection.classList.add('hidden');
+                answersSection.classList.remove('hidden');
+                answersSection.classList.add('fade-in');
+                renderAnswers();
+            });
+            
+            document.getElementById('show-transcript').addEventListener('click', function() {
+                resultsSection.classList.add('hidden');
+                transcriptSection.classList.remove('hidden');
+                transcriptSection.classList.add('fade-in');
+            });
+            
+            document.getElementById('back-to-results').addEventListener('click', function() {
+                answersSection.classList.add('hidden');
+                resultsSection.classList.remove('hidden');
+                resultsSection.classList.add('fade-in');
+            });
+            
+            document.getElementById('back-to-results-from-transcript').addEventListener('click', function() {
+                transcriptSection.classList.add('hidden');
+                resultsSection.classList.remove('hidden');
+                resultsSection.classList.add('fade-in');
+            });
+            
+            document.getElementById('restart-activity').addEventListener('click', function() {
+                // Reset everything
+                currentQuestionIndex = 0;
+                userAnswers = Array(questions.length).fill(null);
+                
+                // Reset UI
+                resultsSection.classList.add('hidden');
+                introSection.classList.remove('hidden');
+                introSection.classList.add('fade-in');
+                
+                // Reset progress steps
+                step1.classList.add('active');
+                step1.classList.remove('completed');
+                step2.classList.remove('active');
+                step2.classList.remove('completed');
+                step3.classList.remove('active');
+            });
+            
+            prevButton.addEventListener('click', function() {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    renderQuestion();
+                }
+            });
+            
+            nextButton.addEventListener('click', function() {
+                if (currentQuestionIndex < questions.length - 1) {
+                    currentQuestionIndex++;
+                    renderQuestion();
+                }
+            });
+            
+            submitButton.addEventListener('click', function() {
+                quizSection.classList.add('hidden');
+                resultsSection.classList.remove('hidden');
+                resultsSection.classList.add('fade-in');
+                step2.classList.remove('active');
+                step2.classList.add('completed');
+                step3.classList.add('active');
+                showResults();
+            });
+            
+            // Function to render current question
+            function renderQuestion() {
+                const question = questions[currentQuestionIndex];
+                
+                // Create question HTML
+                let questionHTML = `
+                    <div class="question-container fade-in">
+                        <div class="question">${question.id}. ${question.text}</div>
+                        <div class="options">
+                `;
+                
+                // Add options
+                question.options.forEach(option => {
+                    const isSelected = userAnswers[currentQuestionIndex] === option.id;
+                    questionHTML += `
+                        <label class="option ${isSelected ? 'selected' : ''}" data-option="${option.id}">
+                            <input type="radio" name="q${question.id}" value="${option.id}" ${isSelected ? 'checked' : ''}>
+                            ${option.id}) ${option.text}
+                        </label>
+                    `;
+                });
+                
+                questionHTML += `
+                        </div>
+                        <div class="question-progress">Question ${currentQuestionIndex + 1} of ${questions.length}</div>
+                    </div>
+                `;
+                
+                questionsContainer.innerHTML = questionHTML;
+                
+                // Add event listeners to options
+                document.querySelectorAll('.option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        const optionId = this.getAttribute('data-option');
+                        userAnswers[currentQuestionIndex] = optionId;
+                        
+                        // Update selected state
+                        document.querySelectorAll('.option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        this.classList.add('selected');
+                        
+                        // Check input
+                        const input = this.querySelector('input[type="radio"]');
+                        if (input) {
+                            input.checked = true;
+                        }
+                    });
+                });
+                
+                // Update button visibility
+                prevButton.classList.toggle('hidden', currentQuestionIndex === 0);
+                nextButton.classList.toggle('hidden', currentQuestionIndex === questions.length - 1);
+                submitButton.classList.toggle('hidden', currentQuestionIndex !== questions.length - 1);
+            }
+            
+            // Function to display results
+            function showResults() {
+                const scoreDisplay = document.getElementById('score-display');
+                const feedback = document.getElementById('feedback');
+                
+                // Calculate score
+                let correctAnswers = 0;
+                userAnswers.forEach((answer, index) => {
+                    if (answer === questions[index].correctAnswer) {
+                        correctAnswers++;
+                    }
+                });
+                
+                const percentage = Math.round((correctAnswers / questions.length) * 100);
+                
+                // Display score
+                scoreDisplay.textContent = `You scored ${correctAnswers} out of ${questions.length} (${percentage}%)`;
+                
+                // Display feedback based on score
+                if (percentage >= 80) {
+                    feedback.innerHTML = `<p>Excellent! You have a very good understanding of the content.</p>`;
+                } else if (percentage >= 60) {
+                    feedback.innerHTML = `<p>Good job! You've understood most of the key points.</p>`;
+                } else {
+                    feedback.innerHTML = `<p>You might want to listen to the audio again and review the transcript.</p>`;
+                }
+                
+                // Show the results
+                document.getElementById('results-display').style.display = 'block';
+            }
+            
+            // Function to render answers review
+            function renderAnswers() {
+                let answersHTML = '';
+                
+                questions.forEach((question, index) => {
+                    const userAnswer = userAnswers[index];
+                    const isCorrect = userAnswer === question.correctAnswer;
+                    
+                    answersHTML += `
+                        <div class="question-container">
+                            <div class="question">${question.id}. ${question.text}</div>
+                            <div class="options">
+                    `;
+                    
+                    question.options.forEach(option => {
+                        const isUserAnswer = userAnswer === option.id;
+                        const isCorrectAnswer = question.correctAnswer === option.id;
+                        
+                        let optionClass = '';
+                        if (isUserAnswer && isCorrect) {
+                            optionClass = 'correct';
+                        } else if (isUserAnswer && !isCorrect) {
+                            optionClass = 'incorrect';
+                        } else if (isCorrectAnswer) {
+                            optionClass = 'correct';
+                        }
+                        
+                        answersHTML += `
+                            <div class="option ${optionClass}">
+                                ${option.id}) ${option.text}
+                                ${isCorrectAnswer ? ' ✓' : ''}
+                                ${isUserAnswer && !isCorrect ? ' ✗' : ''}
+                            </div>
+                        `;
+                    });
+                    
+                    answersHTML += `
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                document.getElementById('answers-container').innerHTML = answersHTML;
+            }
+            
+            // Simulate audio player functionality
+            const audio = document.getElementById('business-angel-audio');
+            
+            // Since we don't have a real audio file, let's create a simple mock
+            audio.addEventListener('play', function() {
+                console.log('Audio started playing');
+            });
+            
+            audio.addEventListener('pause', function() {
+                console.log('Audio paused');
+            });
+            
+            audio.addEventListener('ended', function() {
+                console.log('Audio finished');
+            });
+        });
+    </script>
+</body>
+</html>
